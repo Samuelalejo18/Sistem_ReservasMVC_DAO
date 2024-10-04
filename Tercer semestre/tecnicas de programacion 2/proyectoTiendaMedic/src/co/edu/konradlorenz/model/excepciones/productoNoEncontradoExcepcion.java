@@ -1,5 +1,7 @@
 package co.edu.konradlorenz.model.excepciones;
 
-public class productoNoEncontradoExcepcion {
-    
+public class ProductoNoEncontradoExcepcion extends Throwable {
+    public ProductoNoEncontradoExcepcion(String message) {
+        super(message);
+    }
 }

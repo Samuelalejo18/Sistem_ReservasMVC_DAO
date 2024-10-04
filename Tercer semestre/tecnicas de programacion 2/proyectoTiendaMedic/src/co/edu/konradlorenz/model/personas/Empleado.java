@@ -1,4 +1,4 @@
-package co.edu.konradlorenz.model;
+package co.edu.konradlorenz.model.personas;
 
 public class Empleado extends Persona {
 	private String contrasena;

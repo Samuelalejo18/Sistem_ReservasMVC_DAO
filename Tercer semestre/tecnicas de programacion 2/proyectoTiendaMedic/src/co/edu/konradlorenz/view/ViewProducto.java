@@ -15,7 +15,7 @@ public class ViewProducto {
         System.out.println("5.Cuello Ortopedico ");
         System.out.println("6.Glucometro ");
         System.out.println("7.MediasComprension ");
-        System.out.println("8.Muletas ");
+        System.out.println("8.Silla ducha ");
 
     }
 
@@ -237,10 +237,30 @@ public class ViewProducto {
         return fuenteDeEnergia;
     }
 
+    public int pedirPesoSoportado() {
+        int pesoSoportado = 0;
+        boolean verificarPesoSoportado = false;
+        do {
+            try {
+                System.out.println("Ingrese el PesoSoportado del producto");
+                pesoSoportado = sc.nextInt();
+                verificarPesoSoportado = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Ingrese un dato valido(solo numeros)");
+                sc.nextLine();
+            }
+        } while (!verificarPesoSoportado);
+        return pesoSoportado;
+    }
+
     public void menuProveedor() {
         System.out.println("Menu Proveedor");
         System.out.println("1.Registrar Proveedor");
-        System.out.println("2.Buscar  ProveedorPr ");
+        System.out.println("2.Buscar  Proveedor ");
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        System.out.println(mensaje);
     }
 
 }

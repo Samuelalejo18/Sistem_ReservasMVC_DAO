@@ -1,6 +1,10 @@
-package co.edu.konradlorenz.model;
+package co.edu.konradlorenz.model.personas;
 
 import java.util.ArrayList;
+
+import javax.security.auth.login.LoginException;
+
+import co.edu.konradlorenz.model.excepciones.RegistroExcepcion;
 
 public class MetodosEmpleado {
 
@@ -11,13 +15,14 @@ public class MetodosEmpleado {
 	public MetodosEmpleado() {
 
 	}
-	
+
 	public void pruebaEmpleado() {
-		Empleado empleado= new Empleado("Samuel","monsalve",1234567890,"Samuelalejomonsalve@gmail.com",1014180728,"carrera 68g","lukas2012",1654321008);
+		Empleado empleado = new Empleado("Samuel", "monsalve", 1234567890, "Samuelalejomonsalve@gmail.com", 1014180728,
+				"carrera 68g", "lukas2012", 1654321008);
 		empleados.add(empleado);
 	}
 
-	public static boolean registrar(Empleado empleado) {
+	public static boolean registrar(Empleado empleado) throws RegistroExcepcion {
 		boolean existeEmpleado1 = false;
 		boolean existeEmpleado2 = false;
 		boolean existeEmpleado3 = false;
@@ -25,21 +30,21 @@ public class MetodosEmpleado {
 		for (Empleado empleado1 : empleados) {
 
 			if (empleado1.getCodigoEmpleado() == empleado.getCodigoEmpleado()) {
-				existeEmpleado1 = true;
+				throw new RegistroExcepcion("El codigo ya existe");
 
 			}
 			if (empleado1.getEmail().equals(empleado.getEmail())) {
-				existeEmpleado2 = true;
+				throw new RegistroExcepcion("El correo ya existe");
 			}
 
 			if (empleado1.getId() == empleado.getId()) {
-				existeEmpleado3 = true;
+				throw new RegistroExcepcion("El id ya existe");
 			}
 
 		}
 
 		if ((existeEmpleado1 && existeEmpleado2) && existeEmpleado3) {
-			return false;
+			throw new RegistroExcepcion("El empleado ya esta registrado");
 		} else {
 			empleados.add(empleado);
 			return true;
@@ -47,7 +52,7 @@ public class MetodosEmpleado {
 
 	}
 
-	public static Empleado autenticarse(long codigoEmpleado, String contrasena) {
+	public static Empleado autenticarse(long codigoEmpleado, String contrasena) throws LoginException {
 
 		Empleado empleadoEncontrado = null;
 		for (Empleado empleado : empleados) {
@@ -62,15 +67,14 @@ public class MetodosEmpleado {
 				empleadoAutenticado = empleadoEncontrado;
 				return empleadoAutenticado;
 			} else {
-				return null;
+				throw new LoginException("Autenticacion fallida");
 			}
 
 		} else {
-			return null;
+			throw new LoginException("El empleado no existe");
+			
 		}
 
 	}
-	
-	
-	
+
 }

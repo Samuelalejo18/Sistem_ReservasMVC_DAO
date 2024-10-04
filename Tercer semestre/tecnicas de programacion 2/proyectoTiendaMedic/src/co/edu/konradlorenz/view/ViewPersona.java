@@ -27,7 +27,7 @@ public class ViewPersona {
 		System.out.println("Bienvenido empleado a tienda Medic ");
 		System.out.println("1. Autenticar empleado ");
 		System.out.println("2.Registrar empleado ");
-		System.out.println("0.Salir del sistema de reservas");
+		System.out.println("0.Salir del sistema de Tienda Medic");
 	}
 
 	public String ingresarEmail() {
@@ -181,6 +181,10 @@ public class ViewPersona {
 		System.out.println("6. Productos");
 		System.out.println("7.Proveedores");
 		System.out.println("");
+	}
+
+	public void mostrarMensaje(String mensaje) {
+		System.out.println(mensaje);
 	}
 
 }

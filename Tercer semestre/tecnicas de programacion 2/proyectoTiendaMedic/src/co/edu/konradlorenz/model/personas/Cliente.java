@@ -1,4 +1,6 @@
-package co.edu.konradlorenz.model;
+package co.edu.konradlorenz.model.personas;
+
+import co.edu.konradlorenz.model.PuntosCompra;
 
 public class Cliente extends Persona  implements PuntosCompra{
 

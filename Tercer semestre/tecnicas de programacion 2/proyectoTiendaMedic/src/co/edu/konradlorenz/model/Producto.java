@@ -1,5 +1,7 @@
 package co.edu.konradlorenz.model;
 
+import co.edu.konradlorenz.model.personas.Proveedor;
+
 public abstract class Producto {
 
 	protected double precio;

@@ -3,7 +3,9 @@ package co.edu.konradlorenz.controller;
 import java.util.ArrayList;
 
 import co.edu.konradlorenz.model.Producto;
-import co.edu.konradlorenz.model.Proveedor;
+import co.edu.konradlorenz.model.excepciones.ProveedorNoExisteExcepcion;
+import co.edu.konradlorenz.model.excepciones.ProveedorYaExisteExcepcion;
+import co.edu.konradlorenz.model.personas.Proveedor;
 import co.edu.konradlorenz.model.productosAlquiler.Caminadora;
 import co.edu.konradlorenz.model.productosAlquiler.Muletas;
 import co.edu.konradlorenz.model.productosAlquiler.SillaDeRuedas;
@@ -19,16 +21,17 @@ class ControllerProducto {
 
     ArrayList<Proveedor> proveedores = new ArrayList<>();
     ArrayList<Producto> productos = new ArrayList<>();
-    ArrayList<Producto> productosAComprar = new ArrayList<>();
+
     ViewProducto viewProducto = new ViewProducto();
     ViewPersona viewPersona = new ViewPersona();
+ControllerProveedor controllerProveedor= new ControllerProveedor();
 
     public void agregarProducto() {
         int opcion = -1;
         while (opcion != 0) {
             viewProducto.mostrarMenuProductos();
             opcion = viewProducto.ingresarOpcion();
-
+            registrarProductos();
             switch (opcion) {
                 case 1:
                     int opcion2 = -1;
@@ -37,25 +40,42 @@ class ControllerProducto {
                         opcion2 = viewProducto.ingresarOpcion();
                         switch (opcion2) {
                             case 1:
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(
+                                            new Caminadora(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
+                                                    viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                                    viewProducto.pedirMarca(),
+                                                    true, proveedor, viewProducto.pedirMaterial(),
+                                                    viewProducto.esAjustable(),
+                                                    viewProducto.pedirprecioPorDia()));
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
 
-                                productos.add(new Caminadora(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
-                                        viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
-                                        viewProducto.pedirMarca(),
-                                        true, crearProveedor(), viewProducto.pedirMaterial(),
-                                        viewProducto.esAjustable(),
-                                        viewProducto.pedirprecioPorDia()));
                                 break;
                             case 2:
-                                productos.add(new Caminadora(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
-                                        viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
-                                        viewProducto.pedirMarca(),
-                                        true, buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
-                                        viewProducto.pedirMaterial(),
-                                        viewProducto.esAjustable(),
-                                        viewProducto.pedirprecioPorDia()));
-                                break;
+                                try {
 
+                                    productos.add(new Caminadora(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            true, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.esAjustable(),
+                                            viewProducto.pedirprecioPorDia()));
+                                    break;
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            case 0:
+                                viewProducto.mostrarMensaje("Ninguna caso");
                             default:
+
                                 break;
                         }
                     }
@@ -70,12 +90,11 @@ class ControllerProducto {
                         switch (opcion3) {
 
                             case 1:
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
 
-                                Proveedor proveedor = crearProveedor();
-                                if (!registrarProveedor(proveedor)) {
-                                    System.out.println("ya existe");
-                                } else {
-                                    registrarProveedor(proveedor);
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    viewProducto.mostrarMensaje("Proveedor");
                                     productos.add(new Muletas(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
                                             viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
                                             viewProducto.pedirMarca(),
@@ -83,20 +102,30 @@ class ControllerProducto {
                                             viewProducto.pedirMaterial(),
                                             viewProducto.esAjustable(), viewProducto.pedirprecioPorDia()));
 
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
                                 }
 
                                 break;
                             case 2:
+                                try {
 
-                                productos.add(new Muletas(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
-                                        viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
-                                        viewProducto.pedirMarca(),
-                                        true, buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
-                                        viewProducto.pedirLongitud(),
-                                        viewProducto.pedirMaterial(),
-                                        viewProducto.esAjustable(), viewProducto.pedirprecioPorDia()));
+                                    productos.add(new Muletas(viewProducto.pedirprecio(), viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            true, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirLongitud(),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.esAjustable(), viewProducto.pedirprecioPorDia()));
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+
                                 break;
                             default:
+                                viewProducto.mostrarMensaje("Caso no valido");
                                 break;
                         }
                     }
@@ -110,64 +139,266 @@ class ControllerProducto {
                         switch (opcion4) {
                             case 1:
 
-                                productos.add(new SillaDeRuedas(viewProducto.pedirprecio(),
-                                        viewProducto.pedirCantidad(),
-                                        viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
-                                        viewProducto.pedirMarca(),
-                                        true, crearProveedor(), viewProducto.esElectrica(),
-                                        viewProducto.pedirprecioPorDia()));
-                                break;
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new SillaDeRuedas(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            true, proveedor, viewProducto.esElectrica(),
+                                            viewProducto.pedirprecioPorDia()));
+
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
                             case 2:
-                                productos.add(new SillaDeRuedas(viewProducto.pedirprecio(),
-                                        viewProducto.pedirCantidad(),
-                                        viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
-                                        viewProducto.pedirMarca(),
-                                        true, buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
-                                        viewProducto.esElectrica(),
-                                        viewProducto.pedirprecioPorDia()));
+                                try {
+                                    productos.add(new SillaDeRuedas(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            true, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.esElectrica(),
+                                            viewProducto.pedirprecioPorDia()));
+
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
                                 break;
 
                             default:
+
                                 break;
                         }
                     }
 
                     break;
                 case 4:
-                    Canula canula = new Canula(viewProducto.pedirprecio(),
-                            viewProducto.pedirCantidad(),
-                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(), viewProducto.pedirMarca(),
-                            false, crearProveedor(), viewProducto.pedirTamano(), viewProducto.pedirMaterial(),
-                            viewProducto.pedirTipo());
-                    productos.add(canula);
+                    int opcion5 = -1;
+                    while (opcion5 != 0) {
+                        viewProducto.menuProveedor();
+                        opcion5 = viewProducto.ingresarOpcion();
+                        switch (opcion5) {
+                            case 1:
+
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new Canula(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, proveedor, viewProducto.pedirTamano(),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.pedirTipo()));
+
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+
+                                break;
+                            case 2:
+                                try {
+                                    productos.add(new Canula(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirTamano(),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.pedirTipo()));
+
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+
+                                break;
+
+                            default:
+                                viewProducto.mostrarMensaje("Caso no valido");
+                                break;
+                        }
+                    }
+
                     break;
                 case 5:
-                    CuelloOrtopedico cuelloOrtopedico = new CuelloOrtopedico(viewProducto.pedirprecio(),
-                            viewProducto.pedirCantidad(),
-                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(), viewProducto.pedirMarca(),
-                            false, crearProveedor(), viewProducto.pedirTamano(), viewProducto.pedirMaterial(),
-                            viewProducto.pedirSoporte());
-                    productos.add(cuelloOrtopedico);
+                    int opcion6 = -1;
+                    while (opcion6 != 0) {
+                        viewProducto.menuProveedor();
+                        opcion6 = viewProducto.ingresarOpcion();
+                        switch (opcion6) {
+                            case 1:
+
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new CuelloOrtopedico(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, proveedor, viewProducto.pedirTamano(),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.pedirSoporte()));
+
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+
+                                break;
+                            case 2:
+                                try {
+                                    productos.add(new CuelloOrtopedico(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirTamano(),
+                                            viewProducto.pedirMaterial(),
+                                            viewProducto.pedirSoporte()));
+
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
                     break;
                 case 6:
-                    Glucometro glucometro = new Glucometro(viewProducto.pedirprecio(),
-                            viewProducto.pedirCantidad(),
-                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(), viewProducto.pedirMarca(),
-                            false, crearProveedor(), viewProducto.pedirModelo(),
-                            viewProducto.pedirFuenteDeEnergia());
-                    productos.add(glucometro);
+
+                    int opcion7 = -1;
+                    while (opcion7 != 0) {
+                        viewProducto.menuProveedor();
+                        opcion7 = viewProducto.ingresarOpcion();
+                        switch (opcion7) {
+                            case 1:
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new Glucometro(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, proveedor, viewProducto.pedirModelo(),
+                                            viewProducto.pedirFuenteDeEnergia()));
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case 2:
+                                try {
+                                    productos.add(new Glucometro(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirModelo(),
+                                            viewProducto.pedirFuenteDeEnergia()));
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
                     break;
                 case 7:
-                    MediasCompresion mediasCompresion = new MediasCompresion(viewProducto.pedirprecio(),
-                            viewProducto.pedirCantidad(),
-                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(), viewProducto.pedirMarca(),
-                            false, crearProveedor(), viewProducto.pedirTamano(), viewProducto.pedirTipo(),
-                            viewProducto.pedirLongitud());
-                    productos.add(mediasCompresion);
+                    int opcion8 = -1;
+                    while (opcion8 != 0) {
+                        viewProducto.menuProveedor();
+                        opcion8 = viewProducto.ingresarOpcion();
+                        switch (opcion8) {
+                            case 1:
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new MediasCompresion(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, proveedor, viewProducto.pedirTamano(),
+                                            viewProducto.pedirTipo(),
+                                            viewProducto.pedirLongitud()));
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case 2:
+                                try {
+
+                                    productos.add(new MediasCompresion(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirTamano(),
+                                            viewProducto.pedirTipo(),
+                                            viewProducto.pedirLongitud()));
+
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
                 case 8:
+                    int opcion9 = -1;
+                    while (opcion9 != 0) {
+                        viewProducto.menuProveedor();
+                        opcion8 = viewProducto.ingresarOpcion();
+                        switch (opcion9) {
+                            case 1:
+                                try {
+                                    Proveedor proveedor = controllerProveedor.crearProveedor();
+                                    controllerProveedor.registrarProveedor(proveedor);
+                                    productos.add(new SillaDucha(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, proveedor, viewProducto.pedirMaterial(), viewProducto.pedirTipo(),
+                                            viewProducto.pedirPesoSoportado()));
+                                } catch (ProveedorYaExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case 2:
+                                try {
+                                    productos.add(new SillaDucha(viewProducto.pedirprecio(),
+                                            viewProducto.pedirCantidad(),
+                                            viewProducto.pedirCodigo(), viewProducto.pedirDescripcion(),
+                                            viewProducto.pedirMarca(),
+                                            false, controllerProveedor.buscarProveedorExistente(viewPersona.ingresarCodigoProveedor()),
+                                            viewProducto.pedirMaterial(), viewProducto.pedirTipo(),
+                                            viewProducto.pedirPesoSoportado()));
 
+                                } catch (ProveedorNoExisteExcepcion e) {
+                                    viewProducto.mostrarMensaje(e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -175,85 +406,7 @@ class ControllerProducto {
         }
     }
 
-    public void casosVenderAlquilarProducto() {
-        int opcion = -1;
-        while (opcion != 0) {
-            viewProducto.mostrarMenuVentaAlquilerProducto();
-            opcion = viewProducto.ingresarOpcion();
-            switch (opcion) {
-                case 1:
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    public Proveedor crearProveedor() {
-        Proveedor proveedor = new Proveedor(viewPersona.ingresarNombre(), viewPersona.ingresarApellido(),
-                viewPersona.ingresarNumeroTelefono(), viewPersona.ingresarEmail(), viewPersona.ingresarId(),
-                viewPersona.ingresarDireccion(), viewPersona.ingresarNombreEmpresa(),
-                viewPersona.ingresarCodigoEmpleado());
-
-        return proveedor;
-    }
-
-    public boolean registrarProveedor(Proveedor proveedor) {
-        boolean existProveedor1 = false;
-        boolean existProveedor2 = false;
-        boolean existProveedor3 = false;
-        for (Proveedor proveedor1 : proveedores) {
-
-            if (proveedor1.getCodigoProveedor() == proveedor.getCodigoProveedor()) {
-                existProveedor1 = true;
-
-            }
-            if (proveedor1.getEmail().equals(proveedor.getEmail())) {
-                existProveedor2 = true;
-            }
-
-            if (proveedor1.getId() == proveedor.getId()) {
-                existProveedor3 = true;
-            }
-            if ((existProveedor1 && existProveedor2) && existProveedor3) {
-                return false;
-            } else {
-                proveedores.add(proveedor);
-                return true;
-            }
-
-        }
-        return false;
-    }
-
-    public Proveedor buscarProveedorExistente(long codigoProveedor) {
-        Proveedor proveedorBuscado = null;
-        try {
-
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-
-        for (Proveedor proveedor : proveedores) {
-            if (proveedor.getCodigoProveedor() == codigoProveedor) {
-                proveedorBuscado = proveedor;
-            }
-        }
-        return proveedorBuscado;
-    }
-
-    public Producto venderProducto(long codigo) {
-        Producto procuctoAVender = null;
-        for (Producto producto : productos) {
-            if (producto.getCodigo() == codigo) {
-                procuctoAVender = producto;
-            }
-        }
-        // procuctoAVender.calcularPrecioTotal();
-        return procuctoAVender;
-    }
+    
 
     public String hallarTipoProducto(Producto producto) {
         String tipoProducto = "";
@@ -280,6 +433,10 @@ class ControllerProducto {
     }
 
     public void registrarProductos() {
+
+        Proveedor proveedor = new Proveedor("samuel", "Monsalve", 123, "proveedor@gmail.com", 123, "mi casa",
+                "copetrol", 132);
+        proveedores.add(proveedor);
     }
 
 }

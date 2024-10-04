@@ -1,7 +1,7 @@
 package co.edu.konradlorenz.model.productosSoloVenta;
 
 import co.edu.konradlorenz.model.Producto;
-import co.edu.konradlorenz.model.Proveedor;
+import co.edu.konradlorenz.model.personas.Proveedor;
 
 public class MediasCompresion extends Producto {
 	private int tamano;

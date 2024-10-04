@@ -2,7 +2,7 @@ package co.edu.konradlorenz.model.productosAlquiler;
 
 import co.edu.konradlorenz.model.Alquiler;
 import co.edu.konradlorenz.model.Producto;
-import co.edu.konradlorenz.model.Proveedor;
+import co.edu.konradlorenz.model.personas.Proveedor;
 
 public class SillaDeRuedas extends Producto implements Alquiler {
 
